@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center mb-5">
+            <h1 class="display-3 mb-3">🚀 Welcome to Smart City Air Quality Dashboard</h1>
+            <p class="lead">Advanced AI-powered environmental monitoring system</p>
+        </div>
+        
+        <div class="card prediction-card">
+            <div class="card-body text-center">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <i class="fas fa-database fa-3x mb-3"></i>
+                                <h5>Data Processing</h5>
+                                <p class="small">Generate & clean air quality datasets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card-success">
+                            <div class="card-body">
+                                <i class="fas fa-brain fa-3x mb-3"></i>
+                                <h5>AI Training</h5>
+                                <p class="small">Train ML models for prediction</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card-warning">
+                            <div class="card-body">
+                                <i class="fas fa-search fa-3x mb-3"></i>
+                                <h5>Pattern Mining</h5>
+                                <p class="small">Discover pollution associations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card-info">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-3x mb-3"></i>
+                                <h5>Dashboard</h5>
+                                <p class="small">Initialize interactive analytics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mb-4">🔧 System Setup Required</h3>
+                <p class="mb-4">Click the button below to initialize your AI-powered air quality monitoring system:</p>
+                
+                <div class="setup-checklist mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Generate synthetic air quality data (1000+ records)</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Train Random Forest classification model</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Train Linear Regression prediction model</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Mine association rules using Apriori algorithm</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Initialize interactive dashboard components</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Prepare real-time analytics engine</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-predict btn-lg px-5 py-3" onclick="runSetup()" id="setupBtn">
+                    <i class="fas fa-rocket me-2"></i> Initialize AI System
+                </button>
+                
+                <div id="setupProgress" class="mt-5" style="display: none;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center mb-3">
+                                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <h5 class="text-primary">🤖 AI System Initialization in Progress...</h5>
+                            <p class="text-muted">Training machine learning models and processing data. This may take 2-3 minutes.</p>
+                            <div class="progress mt-3" style="height: 10px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="setupResult" class="mt-4" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-info-circle me-2 text-info"></i>About This AI-Powered System
+                </h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-magic fa-3x text-primary mb-3"></i>
+                            <h5>🎯 Smart Features</h5>
+                        </div>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-brain text-success me-2"></i> Real-time AQI prediction using ML</li>
+                            <li class="mb-2"><i class="fas fa-tags text-warning me-2"></i> Intelligent air quality classification</li>
+                            <li class="mb-2"><i class="fas fa-project-diagram text-info me-2"></i> Pattern discovery with association rules</li>
+                            <li class="mb-2"><i class="fas fa-chart-pie text-danger me-2"></i> Interactive data visualizations</li>
+                            <li class="mb-2"><i class="fas fa-city text-primary me-2"></i> Multi-city comparative analysis</li>
+                            <li class="mb-2"><i class="fas fa-clock text-secondary me-2"></i> Time-series trend analysis</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-cogs fa-3x text-success mb-3"></i>
+                            <h5>⚙️ Technology Stack</h5>
+                        </div>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fab fa-python text-warning me-2"></i> Python + Flask backend</li>
+                            <li class="mb-2"><i class="fas fa-robot text-info me-2"></i> Scikit-learn ML models</li>
+                            <li class="mb-2"><i class="fab fa-html5 text-danger me-2"></i> Modern HTML5 + CSS3</li>
+                            <li class="mb-2"><i class="fab fa-bootstrap text-primary me-2"></i> Bootstrap responsive design</li>
+                            <li class="mb-2"><i class="fas fa-chart-line text-success me-2"></i> Chart.js visualizations</li>
+                            <li class="mb-2"><i class="fas fa-database text-secondary me-2"></i> Pandas + NumPy processing</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                            <h5>🚀 AI Capabilities</h5>
+                        </div>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-tree text-success me-2"></i> Random Forest classification</li>
+                            <li class="mb-2"><i class="fas fa-chart-area text-info me-2"></i> Linear regression prediction</li>
+                            <li class="mb-2"><i class="fas fa-search-plus text-warning me-2"></i> Apriori association mining</li>
+                            <li class="mb-2"><i class="fas fa-eye text-primary me-2"></i> Pattern recognition</li>
+                            <li class="mb-2"><i class="fas fa-recommendations text-danger me-2"></i> Smart recommendations</li>
+                            <li class="mb-2"><i class="fas fa-sync-alt text-secondary me-2"></i> Real-time analytics</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>System Requirements
+                        </h6>
+                        <p class="mb-0">
+                            This system requires approximately <strong>2-3 minutes</strong> for initial setup. 
+                            Once initialized, all predictions and analytics will be available in <strong>real-time</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function runSetup() {
+    const setupBtn = document.getElementById('setupBtn');
+    const setupProgress = document.getElementById('setupProgress');
+    const setupResult = document.getElementById('setupResult');
+    
+    // Show progress, hide button
+    setupBtn.style.display = 'none';
+    setupProgress.style.display = 'block';
+    setupResult.style.display = 'none';
+    
+    fetch('/run_setup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        setupProgress.style.display = 'none';
+        setupResult.style.display = 'block';
+        
+        if (data.success) {
+            setupResult.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="text-success mb-3">🎉 AI System Successfully Initialized!</h3>
+                        <p class="lead mb-4">${data.message}</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="text-success">
+                                    <i class="fas fa-database fa-2x mb-2"></i>
+                                    <h6>Data Ready</h6>
+                                    <small>1000+ records processed</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-success">
+                                    <i class="fas fa-brain fa-2x mb-2"></i>
+                                    <h6>Models Trained</h6>
+                                    <small>AI algorithms active</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-success">
+                                    <i class="fas fa-search fa-2x mb-2"></i>
+                                    <h6>Patterns Found</h6>
+                                    <small>Association rules mined</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-success">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <h6>Dashboard Ready</h6>
+                                    <small>Analytics initialized</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="/" class="btn btn-predict btn-lg px-5">
+                            <i class="fas fa-rocket me-2"></i>Launch Dashboard
+                        </a>
+                    </div>
+                </div>
+            `;
+        } else {
+            setupResult.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="text-danger mb-3">⚠️ Setup Failed</h3>
+                        <p class="lead mb-4">Error: ${data.error}</p>
+                        <button class="btn btn-custom btn-lg" onclick="location.reload()">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        setupProgress.style.display = 'none';
+        setupResult.style.display = 'block';
+        setupResult.innerHTML = `
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-circle"></i> Setup Failed</h5>
+                <p>Network error: ${error.message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+            </div>
+        `;
+    });
+}
+</script>
+{% endblock %}

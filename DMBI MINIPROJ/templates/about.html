@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}About - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1">About Project</h1>
+        <p class="text-muted">Technology stack, features, and project objectives</p>
+    </div>
+</div>
+
+<!-- Project Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h3 class="text-primary mb-3">{{ project_info.title }}</h3>
+                        <p class="lead">{{ project_info.description }}</p>
+                        <p class="text-muted">{{ project_info.description }}</p>
+                        
+                        <div class="mt-4">
+                            <span class="badge bg-primary me-2">Version {{ project_info.version }}</span>
+                            <span class="badge bg-success me-2">Production Ready</span>
+                            <span class="badge bg-info">Open Source</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="feature-icon mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <h5>Smart City Solution</h5>
+                        <p class="text-muted">AI-powered environmental monitoring</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Objectives -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-target me-2"></i>Project Objectives
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for objective in project_info.objectives %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="feature-icon me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0">{{ objective }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Features -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <h3 class="mb-4">Key Features</h3>
+    </div>
+    {% for feature in features %}
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start">
+                    <div class="feature-icon me-3">
+                        <i class="{{ feature.icon }}"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">{{ feature.title }}</h5>
+                        <p class="card-text text-muted">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Technology Stack -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-code me-2"></i>Technology Stack
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    {% for tech in tech_stack %}
+                    <div class="col-md-4">
+                        <div class="text-center p-3 border rounded">
+                            <i class="{{ tech.icon }} fa-2x text-primary mb-3"></i>
+                            <h6 class="fw-bold">{{ tech.name }}</h6>
+                            <p class="text-muted small mb-0">{{ tech.description }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Architecture Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-sitemap me-2"></i>System Architecture
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--primary-color);">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h6>Data Layer</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li>CSV Data Storage</li>
+                                <li>Pandas Processing</li>
+                                <li>Data Preprocessing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--success-color);">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h6>AI/ML Layer</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li>Scikit-learn Models</li>
+                                <li>Random Forest Classifier</li>
+                                <li>Linear Regression</li>
+                                <li>Association Rules Mining</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--warning-color);">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <h6>Presentation Layer</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li>Flask Web Framework</li>
+                                <li>Bootstrap 5 UI</li>
+                                <li>Chart.js Visualizations</li>
+                                <li>Responsive Design</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Sources & Methodology -->
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Data Sources
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-primary me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Air Quality Sensors</strong>
+                                <p class="text-muted small mb-0">PM2.5, PM10, NO2, SO2, CO, O3 measurements</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-primary me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Weather Stations</strong>
+                                <p class="text-muted small mb-0">Temperature, humidity, wind data</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-primary me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Traffic Monitoring</strong>
+                                <p class="text-muted small mb-0">Vehicle count and traffic density</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs me-2"></i>Methodology
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-success me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Data Preprocessing</strong>
+                                <p class="text-muted small mb-0">Cleaning, normalization, feature engineering</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-success me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Model Training</strong>
+                                <p class="text-muted small mb-0">Supervised learning with cross-validation</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-circle text-success me-2 mt-1" style="font-size: 0.5rem;"></i>
+                            <div>
+                                <strong>Pattern Discovery</strong>
+                                <p class="text-muted small mb-0">Apriori algorithm for association rules</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact & Support -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-envelope me-2"></i>Contact & Support
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Project Information</h6>
+                        <p class="text-muted">This is an academic project demonstrating the application of machine learning and data mining techniques for environmental monitoring in smart cities.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Technical Support</h6>
+                        <p class="text-muted">For technical questions or issues, please refer to the project documentation or contact the development team.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

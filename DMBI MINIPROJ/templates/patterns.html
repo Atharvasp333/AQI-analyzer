@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Pattern Discovery - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1">Pattern Discovery</h1>
+        <p class="text-muted">AI-powered association rules and smart recommendations</p>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-search fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ summary_stats.total_patterns }}</div>
+            <div class="metric-label">Patterns Found</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-percentage fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ summary_stats.avg_confidence }}%</div>
+            <div class="metric-label">Avg Confidence</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-arrow-up fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ summary_stats.max_lift }}</div>
+            <div class="metric-label">Max Lift</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-lightbulb fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ summary_stats.total_patterns }}</div>
+            <div class="metric-label">Recommendations</div>
+        </div>
+    </div>
+</div>
+
+{% if rules %}
+<!-- Association Rules Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-table me-2"></i>Discovered Association Rules
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="35%">Pattern Rule</th>
+                        <th width="12%">Support</th>
+                        <th width="12%">Confidence</th>
+                        <th width="10%">Lift</th>
+                        <th width="26%">Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rule in rules %}
+                    <tr class="pattern-card">
+                        <td>
+                            <span class="badge bg-primary">{{ rule.id }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ rule.rule }}</div>
+                            <small class="text-muted">
+                                {% if 'High' in rule.rule %}
+                                <i class="fas fa-exclamation-triangle text-warning me-1"></i>High Risk Pattern
+                                {% elif 'Traffic' in rule.rule %}
+                                <i class="fas fa-car text-info me-1"></i>Traffic Related
+                                {% else %}
+                                <i class="fas fa-industry text-secondary me-1"></i>Environmental Pattern
+                                {% endif %}
+                            </small>
+                        </td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-info" role="progressbar" 
+                                     style="width: {{ (rule.support * 100)|round }}%">
+                                    <small class="text-white">{{ rule.support }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {{ (rule.confidence * 100)|round }}%">
+                                    <small class="text-white">{{ rule.confidence }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {% if rule.lift > 1.5 %}bg-danger{% elif rule.lift > 1.2 %}bg-warning{% else %}bg-secondary{% endif %} fs-6">
+                                {{ rule.lift }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <i class="fas fa-arrow-right me-1 text-primary"></i>
+                                {{ rule.recommendation }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Action Plan Summary -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>Recommended Action Plan
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--success-color);">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <h6>Environmental Actions</h6>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Increase urban green cover by 15%
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Plant air-purifying trees in high-pollution zones
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Create pollution buffer zones
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--warning-color);">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <h6>Traffic Management</h6>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Implement odd-even vehicle schemes
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Promote public transportation usage
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Create car-free zones in city centers
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="feature-icon mx-auto mb-3" style="background-color: var(--danger-color);">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <h6>Industrial Controls</h6>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Enforce stricter emission standards
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Install real-time monitoring systems
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Incentivize clean technology adoption
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- No Rules Found -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+        <h4>No Patterns Discovered</h4>
+        <p class="text-muted">Association rules have not been generated yet. Please ensure the data preprocessing and model training have been completed.</p>
+        <a href="/setup" class="btn btn-primary">
+            <i class="fas fa-cog me-2"></i>Run Setup
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

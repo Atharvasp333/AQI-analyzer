@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1">Analytics Dashboard</h1>
+        <p class="text-muted">Interactive visualizations and comprehensive analytics</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-end g-3">
+            <div class="col-md-3">
+                <label for="citySelect" class="form-label fw-semibold">
+                    <i class="fas fa-map-marker-alt me-1"></i>Select City
+                </label>
+                <select class="form-select" id="citySelect">
+                    <option value="All">All Cities</option>
+                    {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="startDate" class="form-label fw-semibold">
+                    <i class="fas fa-calendar-alt me-1"></i>From Date
+                </label>
+                <input type="date" class="form-control" id="startDate" value="{{ date_range.min }}">
+            </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label fw-semibold">
+                    <i class="fas fa-calendar-alt me-1"></i>To Date
+                </label>
+                <input type="date" class="form-control" id="endDate" value="{{ date_range.max }}">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" onclick="updateAnalytics()">
+                    <i class="fas fa-sync-alt me-2"></i>Update Analytics
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+<div class="row g-4 mb-4" id="summaryStats">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-database fa-2x"></i>
+            </div>
+            <div class="metric-value" id="totalRecords">-</div>
+            <div class="metric-label">Total Records</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-chart-line fa-2x"></i>
+            </div>
+            <div class="metric-value" id="avgAQI">-</div>
+            <div class="metric-label">Average AQI</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-arrow-up fa-2x"></i>
+            </div>
+            <div class="metric-value" id="maxAQI">-</div>
+            <div class="metric-label">Peak AQI</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-arrow-down fa-2x"></i>
+            </div>
+            <div class="metric-value" id="minAQI">-</div>
+            <div class="metric-label">Minimum AQI</div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>AQI Category Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="categoryChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2 text-primary"></i>AQI Trend Over Time
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="trendChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-city me-2 text-primary"></i>City Comparison
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="cityChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-microscope me-2 text-primary"></i>Pollutant Correlations
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="correlationChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+// Load Google Charts
+google.charts.load('current', {'packages':['corechart', 'bar']});
+google.charts.setOnLoadCallback(function() {
+    console.log('Google Charts loaded');
+    updateAnalytics();
+});
+
+function updateAnalytics() {
+    const city = document.getElementById('citySelect').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Show loading state
+    const summaryStats = document.getElementById('summaryStats');
+    if (summaryStats) {
+        summaryStats.style.opacity = '0.6';
+    }
+
+    fetch(`/api/analytics?city=${city}&start_date=${startDate}&end_date=${endDate}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateCharts(data);
+                updateSummaryStats(data.statistics);
+            } else {
+                console.error('Error:', data.error);
+                alert('Error loading analytics data: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading analytics data');
+        })
+        .finally(() => {
+            // Hide loading state
+            const summaryStats = document.getElementById('summaryStats');
+            if (summaryStats) {
+                summaryStats.style.opacity = '1';
+            }
+        });
+}
+
+function updateCharts(data) {
+    // Category Distribution Chart
+    if (data.category_distribution) {
+        const categoryData = new google.visualization.DataTable();
+        categoryData.addColumn('string', 'Category');
+        categoryData.addColumn('number', 'Count');
+        
+        const categories = Object.keys(data.category_distribution);
+        const counts = Object.values(data.category_distribution);
+        
+        for (let i = 0; i < categories.length; i++) {
+            categoryData.addRow([categories[i], counts[i]]);
+        }
+        
+        const categoryOptions = {
+            title: 'AQI Category Distribution',
+            pieHole: 0.4,
+            colors: ['#10b981', '#f59e0b', '#f97316', '#ef4444', '#7c3aed'],
+            backgroundColor: 'transparent',
+            titleTextStyle: { fontSize: 16, bold: true },
+            legend: { position: 'bottom' }
+        };
+        
+        const categoryChart = new google.visualization.PieChart(document.getElementById('categoryChart'));
+        categoryChart.draw(categoryData, categoryOptions);
+    }
+
+    // AQI Trend Chart
+    if (data.aqi_trend) {
+        const trendData = new google.visualization.DataTable();
+        trendData.addColumn('string', 'Date');
+        trendData.addColumn('number', 'AQI');
+        
+        data.aqi_trend.forEach(item => {
+            const date = new Date(item.Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            trendData.addRow([date, item.AQI]);
+        });
+        
+        const trendOptions = {
+            title: 'AQI Trend Over Time',
+            curveType: 'function',
+            legend: { position: 'none' },
+            backgroundColor: 'transparent',
+            titleTextStyle: { fontSize: 16, bold: true },
+            colors: ['#2563eb'],
+            hAxis: { title: 'Date' },
+            vAxis: { title: 'AQI Value' }
+        };
+        
+        const trendChart = new google.visualization.LineChart(document.getElementById('trendChart'));
+        trendChart.draw(trendData, trendOptions);
+    }
+
+    // City Comparison Chart
+    if (data.city_comparison) {
+        const cityData = new google.visualization.DataTable();
+        cityData.addColumn('string', 'City');
+        cityData.addColumn('number', 'Average AQI');
+        
+        const cities = Object.keys(data.city_comparison);
+        const aqiValues = Object.values(data.city_comparison);
+        
+        for (let i = 0; i < cities.length; i++) {
+            cityData.addRow([cities[i], aqiValues[i]]);
+        }
+        
+        const cityOptions = {
+            title: 'City AQI Comparison',
+            backgroundColor: 'transparent',
+            titleTextStyle: { fontSize: 16, bold: true },
+            colors: ['#2563eb'],
+            hAxis: { title: 'Average AQI' },
+            vAxis: { title: 'City' },
+            legend: { position: 'none' }
+        };
+        
+        const cityChart = new google.visualization.BarChart(document.getElementById('cityChart'));
+        cityChart.draw(cityData, cityOptions);
+    }
+
+    // Pollutant Correlations Chart
+    if (data.pollutant_correlations) {
+        const corrData = new google.visualization.DataTable();
+        corrData.addColumn('string', 'Pollutant');
+        corrData.addColumn('number', 'Correlation');
+        
+        const pollutants = Object.keys(data.pollutant_correlations);
+        const correlations = Object.values(data.pollutant_correlations);
+        
+        for (let i = 0; i < pollutants.length; i++) {
+            corrData.addRow([pollutants[i], correlations[i]]);
+        }
+        
+        const corrOptions = {
+            title: 'Pollutant Correlations with AQI',
+            backgroundColor: 'transparent',
+            titleTextStyle: { fontSize: 16, bold: true },
+            colors: ['#f59e0b'],
+            hAxis: { title: 'Correlation Coefficient' },
+            vAxis: { title: 'Pollutant' },
+            legend: { position: 'none' }
+        };
+        
+        const corrChart = new google.visualization.BarChart(document.getElementById('correlationChart'));
+        corrChart.draw(corrData, corrOptions);
+    }
+}
+
+function updateSummaryStats(stats) {
+    if (!stats) return;
+    
+    const totalRecordsEl = document.getElementById('totalRecords');
+    const avgAQIEl = document.getElementById('avgAQI');
+    const maxAQIEl = document.getElementById('maxAQI');
+    const minAQIEl = document.getElementById('minAQI');
+    
+    if (totalRecordsEl) totalRecordsEl.textContent = (stats.total_records || 0).toLocaleString();
+    if (avgAQIEl) avgAQIEl.textContent = stats.avg_aqi || '-';
+    if (maxAQIEl) maxAQIEl.textContent = stats.max_aqi || '-';
+    if (minAQIEl) minAQIEl.textContent = stats.min_aqi || '-';
+}
+</script>
+{% endblock %}

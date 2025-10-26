@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}AI Predictions - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1">AI Predictions</h1>
+        <p class="text-muted">Real-time AQI forecasting using machine learning</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Prediction Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-sliders-h me-2"></i>Environmental Parameters
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="predictionForm">
+                    <!-- Pollutant Concentrations -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-flask me-2"></i>Pollutant Concentrations
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="pm25" class="form-label">PM2.5 (μg/m³)</label>
+                                <input type="number" class="form-control" id="pm25" value="50" step="0.1" min="0"
+                                    max="500">
+                                <small class="text-muted">Fine particulate matter</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="pm10" class="form-label">PM10 (μg/m³)</label>
+                                <input type="number" class="form-control" id="pm10" value="80" step="0.1" min="0"
+                                    max="600">
+                                <small class="text-muted">Coarse particulate matter</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="no2" class="form-label">NO2 (μg/m³)</label>
+                                <input type="number" class="form-control" id="no2" value="40" step="0.1" min="0"
+                                    max="200">
+                                <small class="text-muted">Nitrogen dioxide</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="so2" class="form-label">SO2 (μg/m³)</label>
+                                <input type="number" class="form-control" id="so2" value="15" step="0.1" min="0"
+                                    max="100">
+                                <small class="text-muted">Sulfur dioxide</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="co" class="form-label">CO (mg/m³)</label>
+                                <input type="number" class="form-control" id="co" value="1.2" step="0.1" min="0"
+                                    max="10">
+                                <small class="text-muted">Carbon monoxide</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="o3" class="form-label">O3 (μg/m³)</label>
+                                <input type="number" class="form-control" id="o3" value="60" step="0.1" min="0"
+                                    max="300">
+                                <small class="text-muted">Ground-level ozone</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environmental Factors -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-globe me-2"></i>Environmental Factors
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="traffic" class="form-label">Traffic Volume</label>
+                                <input type="number" class="form-control" id="traffic" value="1000" min="0" max="5000">
+                                <small class="text-muted">Vehicles per hour</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="temperature" class="form-label">Temperature (°C)</label>
+                                <input type="number" class="form-control" id="temperature" value="28" min="-10"
+                                    max="50">
+                                <small class="text-muted">Ambient temperature</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="humidity" class="form-label">Humidity (%)</label>
+                                <input type="number" class="form-control" id="humidity" value="65" min="0" max="100">
+                                <small class="text-muted">Relative humidity</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Button -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="generatePrediction()">
+                            <i class="fas fa-brain me-2"></i>Generate AI Prediction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Quick Presets -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-magic me-2"></i>Quick Presets
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadPreset('clean')">
+                        <i class="fas fa-leaf me-2"></i>Clean Air Day
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="loadPreset('moderate')">
+                        <i class="fas fa-cloud me-2"></i>Moderate Pollution
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="loadPreset('heavy')">
+                        <i class="fas fa-smog me-2"></i>Heavy Pollution
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AQI Reference -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>AQI Reference
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="badge bg-success me-2" style="width: 20px; height: 20px;"></div>
+                        <small><strong>Good (0-50):</strong> Satisfactory air quality</small>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="badge bg-warning me-2" style="width: 20px; height: 20px;"></div>
+                        <small><strong>Moderate (51-100):</strong> Acceptable for most people</small>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="badge bg-danger me-2" style="width: 20px; height: 20px;"></div>
+                        <small><strong>Unhealthy (101+):</strong> Health effects for everyone</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Visualization -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Input Visualization
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="inputChart" style="height: 300px;">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                        <p>Chart will appear when you enter values</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prediction Results -->
+<div id="predictionResults" class="mt-4" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-chart-bar me-2"></i>Prediction Results
+            </h5>
+        </div>
+        <div class="card-body" id="resultsContent">
+            <!-- Results will be populated here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    // Load Google Charts
+    google.charts.load('current', {'packages':['corechart', 'gauge']});
+    
+    // Preset configurations
+    const presets = {
+        clean: {
+            pm25: 15, pm10: 25, no2: 20, so2: 5, co: 0.5, o3: 40,
+            traffic: 500, temperature: 25, humidity: 60
+        },
+        moderate: {
+            pm25: 50, pm10: 80, no2: 40, so2: 15, co: 1.2, o3: 60,
+            traffic: 1000, temperature: 28, humidity: 65
+        },
+        heavy: {
+            pm25: 120, pm10: 180, no2: 80, so2: 40, co: 3.0, o3: 120,
+            traffic: 2500, temperature: 32, humidity: 70
+        }
+    };
+
+    function loadPreset(type) {
+        const preset = presets[type];
+        Object.keys(preset).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.value = preset[key];
+            }
+        });
+        updateInputChart();
+    }
+
+    function updateInputChart() {
+        google.charts.setOnLoadCallback(function() {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Pollutant');
+            data.addColumn('number', 'Value');
+            
+            // Get current input values
+            const pollutants = [
+                ['PM2.5', parseFloat(document.getElementById('pm25').value) || 0],
+                ['PM10', parseFloat(document.getElementById('pm10').value) || 0],
+                ['NO2', parseFloat(document.getElementById('no2').value) || 0],
+                ['SO2', parseFloat(document.getElementById('so2').value) || 0],
+                ['CO', parseFloat(document.getElementById('co').value) || 0],
+                ['O3', parseFloat(document.getElementById('o3').value) || 0]
+            ];
+            
+            data.addRows(pollutants);
+            
+            const options = {
+                title: 'Current Pollutant Levels',
+                backgroundColor: 'transparent',
+                titleTextStyle: { fontSize: 14, bold: true },
+                colors: ['#2563eb'],
+                hAxis: { title: 'Concentration' },
+                vAxis: { title: 'Pollutants' },
+                legend: { position: 'none' },
+                chartArea: { width: '70%', height: '70%' }
+            };
+            
+            const chart = new google.visualization.BarChart(document.getElementById('inputChart'));
+            chart.draw(data, options);
+        });
+    }
+
+    // Add event listeners to update chart when inputs change
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = ['pm25', 'pm10', 'no2', 'so2', 'co', 'o3'];
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', updateInputChart);
+            }
+        });
+        
+        // Initial chart update
+        setTimeout(updateInputChart, 500);
+    });
+
+    function generatePrediction() {
+        const button = event.target;
+        const originalText = button.innerHTML;
+
+        // Show loading state
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+        button.disabled = true;
+
+        // Collect form data
+        const data = {
+            pm25: document.getElementById('pm25').value,
+            pm10: document.getElementById('pm10').value,
+            no2: document.getElementById('no2').value,
+            so2: document.getElementById('so2').value,
+            co: document.getElementById('co').value,
+            o3: document.getElementById('o3').value,
+            traffic: document.getElementById('traffic').value,
+            temperature: document.getElementById('temperature').value,
+            humidity: document.getElementById('humidity').value,
+            month: new Date().getMonth() + 1,
+            dayofweek: new Date().getDay()
+        };
+
+        // Make API call
+        fetch('/api/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                displayResults(result);
+
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                displayError('Failed to generate prediction. Please try again.');
+
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+    }
+
+    function displayResults(result) {
+        const resultsDiv = document.getElementById('predictionResults');
+        const contentDiv = document.getElementById('resultsContent');
+
+        if (result.success) {
+            const aqiClass = getAQIClass(result.aqi_value);
+            const aqiColor = getAQIColor(result.aqi_value);
+
+            contentDiv.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="text-center">
+                        <h5 class="mb-3">AQI Gauge</h5>
+                        <div id="aqiGauge" style="height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 border rounded">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-heart fa-3x mb-3 text-primary"></i>
+                            <h3 class="fw-bold">${result.aqi_category}</h3>
+                            <h2 class="display-4 fw-bold" style="color: ${aqiColor};">${result.aqi_value}</h2>
+                        </div>
+                        <div class="health-recommendation">
+                            <h6><i class="fas fa-lightbulb me-2"></i>Health Recommendation</h6>
+                            <p class="mb-0">${result.health_recommendation}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Draw AQI Gauge
+        setTimeout(() => drawAQIGauge(result.aqi_value), 100);
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            displayError(result.error);
+        }
+    }
+
+    function displayError(message) {
+        const resultsDiv = document.getElementById('predictionResults');
+        const contentDiv = document.getElementById('resultsContent');
+
+        contentDiv.innerHTML = `
+        <div class="alert alert-danger">
+            <h5><i class="fas fa-exclamation-triangle me-2"></i>Prediction Error</h5>
+            <p class="mb-0">${message}</p>
+        </div>
+    `;
+
+        resultsDiv.style.display = 'block';
+    }
+
+    function getAQIClass(aqi) {
+        if (aqi <= 50) return 'good';
+        if (aqi <= 100) return 'moderate';
+        if (aqi <= 150) return 'unhealthy-sensitive';
+        if (aqi <= 200) return 'unhealthy';
+        return 'very-unhealthy';
+    }
+
+    function getAQIColor(aqi) {
+        if (aqi <= 50) return '#10b981';
+        if (aqi <= 100) return '#f59e0b';
+        if (aqi <= 150) return '#f97316';
+        if (aqi <= 200) return '#ef4444';
+        return '#7c3aed';
+    }
+
+    function drawAQIGauge(aqiValue) {
+        google.charts.setOnLoadCallback(function() {
+            const data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['AQI', aqiValue]
+            ]);
+
+            const options = {
+                width: 300, height: 300,
+                redFrom: 151, redTo: 300,
+                yellowFrom: 51, yellowTo: 150,
+                greenFrom: 0, greenTo: 50,
+                minorTicks: 5,
+                max: 300
+            };
+
+            const chart = new google.visualization.Gauge(document.getElementById('aqiGauge'));
+            chart.draw(data, options);
+        });
+    }
+</script>
+{% endblock %}

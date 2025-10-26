@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Model Performance - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1">Model Performance</h1>
+        <p class="text-muted">AI model metrics and accuracy evaluation</p>
+    </div>
+</div>
+
+<!-- Performance Metrics -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-bullseye fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ metrics.classification_accuracy }}%</div>
+            <div class="metric-label">Classification Accuracy</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-chart-area fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ metrics.regression_rmse }}</div>
+            <div class="metric-label">Regression RMSE</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-crosshairs fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ metrics.regression_mae }}</div>
+            <div class="metric-label">Mean Absolute Error</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-percentage fa-2x"></i>
+            </div>
+            <div class="metric-value">{{ metrics.r2_score }}</div>
+            <div class="metric-label">R² Score</div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Details -->
+<div class="row g-4 mb-4">
+    {% for insight in insights %}
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-robot me-2"></i>{{ insight.title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">{{ insight.description }}</p>
+                
+                {% if insight.title == 'Classification Model' %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold">Accuracy</span>
+                        <span class="badge bg-{% if insight.accuracy > 85 %}success{% elif insight.accuracy > 70 %}warning{% else %}danger{% endif %}">
+                            {{ insight.accuracy }}%
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-{% if insight.accuracy > 85 %}success{% elif insight.accuracy > 70 %}warning{% else %}danger{% endif %}" 
+                             style="width: {{ insight.accuracy }}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if insight.title == 'Regression Model' %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold">RMSE</span>
+                        <span class="badge bg-{% if insight.rmse < 15 %}success{% elif insight.rmse < 25 %}warning{% else %}danger{% endif %}">
+                            {{ insight.rmse }}
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-{% if insight.rmse < 15 %}success{% elif insight.rmse < 25 %}warning{% else %}danger{% endif %}" 
+                             style="width: {{ 100 - (insight.rmse * 2) }}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-3">
+                    <span class="badge bg-{% if insight.status == 'Excellent' %}success{% elif insight.status == 'Good' %}primary{% else %}warning{% endif %}">
+                        {{ insight.status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Performance Comparison Chart -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Model Performance Comparison
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="performanceChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Information -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cog me-2"></i>Model Configuration
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h6 class="text-primary">Classification Model</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Algorithm:</strong> Random Forest</li>
+                            <li><strong>Features:</strong> 13 environmental parameters</li>
+                            <li><strong>Classes:</strong> 5 AQI categories</li>
+                            <li><strong>Training Data:</strong> 80% split</li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-primary">Regression Model</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Algorithm:</strong> Linear Regression</li>
+                            <li><strong>Features:</strong> 13 environmental parameters</li>
+                            <li><strong>Target:</strong> Continuous AQI values</li>
+                            <li><strong>Validation:</strong> Cross-validation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Performance Insights
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-success">
+                        <i class="fas fa-check-circle me-2"></i>Strengths
+                    </h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-arrow-right me-2 text-muted"></i>
+                            High classification accuracy for AQI categories
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-arrow-right me-2 text-muted"></i>
+                            Low prediction error for continuous values
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-arrow-right me-2 text-muted"></i>
+                            Robust performance across different cities
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h6 class="text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Areas for Improvement
+                    </h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-arrow-right me-2 text-muted"></i>
+                            Include more meteorological features
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-arrow-right me-2 text-muted"></i>
+                            Expand training data with seasonal variations
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if metrics.classification_accuracy == 0 %}
+<!-- No Metrics Available -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-chart-line fa-4x text-muted mb-4"></i>
+                <h4>No Performance Metrics Available</h4>
+                <p class="text-muted">Model training has not been completed yet. Please run the setup process to train the models and generate performance metrics.</p>
+                <a href="/setup" class="btn btn-primary">
+                    <i class="fas fa-cog me-2"></i>Run Setup
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+// Load Google Charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawPerformanceChart);
+
+function drawPerformanceChart() {
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Metric');
+    data.addColumn('number', 'Score');
+    
+    // Add performance data
+    data.addRows([
+        ['Classification Accuracy', {{ metrics.classification_accuracy }}],
+        ['Regression RMSE (Inverted)', {{ 100 - metrics.regression_rmse if metrics.regression_rmse < 100 else 0 }}],
+        ['MAE (Inverted)', {{ 100 - metrics.regression_mae if metrics.regression_mae < 100 else 0 }}],
+        ['R² Score', {{ metrics.r2_score * 100 if metrics.r2_score > 0 else 0 }}]
+    ]);
+    
+    const options = {
+        title: 'Model Performance Comparison',
+        backgroundColor: 'transparent',
+        titleTextStyle: { fontSize: 16, bold: true },
+        colors: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'],
+        hAxis: { 
+            title: 'Performance Score (%)',
+            minValue: 0,
+            maxValue: 100
+        },
+        vAxis: { title: 'Metrics' },
+        legend: { position: 'none' },
+        chartArea: { width: '70%', height: '80%' }
+    };
+    
+    const chart = new google.visualization.BarChart(document.getElementById('performanceChart'));
+    chart.draw(data, options);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Air Quality Intelligence Hub{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="hero-title">Air Quality Intelligence Hub</h1>
+        <p class="hero-subtitle">Advanced AI-powered air quality monitoring and prediction system for smart cities</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/predict" class="btn btn-light btn-lg">
+                <i class="fas fa-brain me-2"></i>AI Predictions
+            </a>
+            <a href="/analytics" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-chart-line me-2"></i>View Analytics
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+<div class="stats-grid">
+    <div class="metric-card">
+        <div class="metric-icon">
+            <i class="fas fa-city fa-2x"></i>
+        </div>
+        <div class="metric-value">{{ stats.total_cities }}</div>
+        <div class="metric-label">Cities Monitored</div>
+    </div>
+    
+    <div class="metric-card">
+        <div class="metric-icon">
+            <i class="fas fa-database fa-2x"></i>
+        </div>
+        <div class="metric-value">{{ "{:,}".format(stats.total_records) }}</div>
+        <div class="metric-label">Data Points</div>
+    </div>
+    
+    <div class="metric-card">
+        <div class="metric-icon">
+            <i class="fas fa-bullseye fa-2x"></i>
+        </div>
+        <div class="metric-value">{{ model_accuracy }}%</div>
+        <div class="metric-label">Model Accuracy</div>
+    </div>
+    
+    <div class="metric-card">
+        <div class="metric-icon">
+            <i class="fas fa-clock fa-2x"></i>
+        </div>
+        <div class="metric-value">Live</div>
+        <div class="metric-label">Real-time Updates</div>
+    </div>
+</div>
+
+<!-- Feature Navigation -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h5 class="card-title">AI Predictions</h5>
+                <p class="card-text text-muted">Get real-time AQI predictions using advanced machine learning models with environmental parameters.</p>
+                <a href="/predict" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Start Predicting
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h5 class="card-title">Pattern Discovery</h5>
+                <p class="card-text text-muted">Discover hidden patterns in air quality data using association rule mining and get actionable insights.</p>
+                <a href="/patterns" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Explore Patterns
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5 class="card-title">Analytics Dashboard</h5>
+                <p class="card-text text-muted">Interactive visualizations and comprehensive analytics for air quality trends and comparisons.</p>
+                <a href="/analytics" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>View Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h5 class="card-title">Model Performance</h5>
+                <p class="card-text text-muted">Monitor and evaluate the performance of AI models with detailed metrics and accuracy scores.</p>
+                <a href="/performance" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Check Performance
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h5 class="card-title">Smart Recommendations</h5>
+                <p class="card-text text-muted">Get AI-powered recommendations for improving air quality based on discovered patterns.</p>
+                <a href="/patterns" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Get Recommendations
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon mx-auto">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h5 class="card-title">About Project</h5>
+                <p class="card-text text-muted">Learn about the technology stack, features, and objectives of this air quality intelligence system.</p>
+                <a href="/about" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+{% if stats.total_records > 0 %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>System Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="border-end">
+                            <h6 class="text-muted">Data Coverage</h6>
+                            <p class="mb-0">{{ stats.date_range.start }} to {{ stats.date_range.end }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border-end">
+                            <h6 class="text-muted">AI Models</h6>
+                            <p class="mb-0">Classification & Regression</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border-end">
+                            <h6 class="text-muted">Update Frequency</h6>
+                            <p class="mb-0">Real-time Processing</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Status</h6>
+                        <p class="mb-0">
+                            <span class="badge bg-success">
+                                <i class="fas fa-circle me-1"></i>Online
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
